@@ -1,5 +1,6 @@
 package com.calculate.vokabeluebung;
 
+import android.content.res.AssetManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,10 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         listView = findViewById(R.id.listView);
         languagespin = findViewById(R.id.spinner);
         initcombo(languagespin);
+
+        readAssets();
 
         languagespin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -65,6 +72,39 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void convertToList(ListView listView, Map germankey){
+        //map in liste kopieren
+    }
+
+    private InputStream getInputStreamForAsset(String filename){
+        AssetManager assets = getAssets();
+        try{
+            return assets.open(filename);
+        }catch (IOException e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void readAssets(){
+        InputStream in = getInputStreamForAsset(FILENAME);
+        BufferedReader bin = new BufferedReader(new InputStreamReader(in));
+        List<String> words = new ArrayList();
+        String line;
+        String[] teile;
+        try{
+            while((line = bin.readLine()) != null){
+                teile = line.split(";");
+                for(int i = 0; i < teile.length;i++){
+                    words.add(teile[i]);
+                }
+                germankey.put(teile[0], words);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void convertMaps(){
 
     }
 }
